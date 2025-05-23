@@ -1,13 +1,1322 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Center Mais - Sistema de Exames</title>
-    <!-- COLE AQUI TODO O CÓDIGO DO ARTEFATO -->
+    <title>Center Mais - Sistema de Exames Laboratoriais</title>
+    <meta name="description" content="Sistema de consulta e seleção de exames laboratoriais do Center Mais">
+    <meta name="keywords" content="center mais, exames, laboratório, análises clínicas, recife">
+    <meta name="author" content="Center Mais">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KPHR3eHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJJbnRlciIgZm9udC13ZWlnaHQ9IjcwMCIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIj5DPC90ZXh0Pgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNjY3ZWVhIi8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzc2NGJhMiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPg==">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #374151;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            background-color: #f1f5f9;
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* Page Content */
+        .page-content {
+            padding: 32px;
+            flex: 1;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.15s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #059669;
+        }
+
+        .stat-chart {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 40px;
+        }
+
+        /* Selection Controls */
+        .selection-controls {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .selection-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .selected-count {
+            background: #ede9fe;
+            color: #7c3aed;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-weight: 500;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .selection-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-generate-pdf {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: white;
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid;
+        }
+
+        .btn-generate-pdf:hover:not(:disabled) {
+            background: #b91c1c;
+            border-color: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-generate-pdf:disabled {
+            background: #d1d5db;
+            border-color: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .btn-clear {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-clear:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #374151;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .exam-checkbox {
+            width: 16px;
+            height: 16px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #7c3aed;
+        }
+
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .select-all-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #7c3aed;
+        }
+
+        /* Filters and Controls */
+        .controls-section {
+            margin-bottom: 24px;
+            margin-top: 0;
+        }
+
+        .filter-tabs {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .filter-tab {
+            height: 36px;
+            padding: 0 16px;
+            border: none;
+            border-radius: 6px;
+            background: none;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-tab:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .filter-tab.active {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .add-filter-btn {
+            margin-left: 16px;
+            height: 36px;
+            padding: 0 12px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            background: none;
+            color: #64748b;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .add-filter-btn:hover {
+            border-color: #94a3b8;
+            color: #374151;
+        }
+
+        .table-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-search {
+            width: 280px;
+            height: 36px;
+            padding: 0 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .table-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .table-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #374151;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th:first-child {
+            text-align: center;
+            padding: 12px 8px;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .data-table td:first-child {
+            text-align: center;
+            padding: 16px 8px;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:hover {
+            background: #fafbfc;
+        }
+
+        .exam-code {
+            font-weight: 600;
+            color: #0f172a;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .exam-description {
+            max-width: 280px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 80px;
+            display: inline-block;
+        }
+
+        .status-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-specialized {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .category-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-hormonal {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .category-hematologia {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .category-bioquimica {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .category-imunologia {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .category-microbiologia {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .category-urinanalise {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .category-genetica {
+            background: #f0f9ff;
+            color: #0c4a6e;
+        }
+
+        .category-toxicologia {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .category-molecular {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 4px;
+            background: #f8fafc;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn:hover {
+            background: #e2e8f0;
+            color: #374151;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .no-results .icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            opacity: 0.5;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        .main-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .main-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .main-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-content {
+                padding: 16px;
+            }
+
+            .table-search {
+                width: 200px;
+            }
+
+            .selection-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .selection-info {
+                justify-content: center;
+                margin-bottom: 8px;
+            }
+
+            .selection-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn-generate-pdf {
+                flex: 1;
+                min-width: 120px;
+                margin: 2px;
+            }
+
+            .btn-clear {
+                flex: 1;
+                min-width: 120px;
+                margin: 2px;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .exam-description {
+                max-width: 150px;
+            }
+
+            .main-header h1 {
+                font-size: 2rem;
+            }
+
+            .main-header p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #7c3aed;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
 </head>
 <body>
-    <!-- CONTEÚDO DO SISTEMA -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <h1>🧪 Center Mais</h1>
+            <p>Sistema de Consulta de Exames Laboratoriais</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">Total de Exames</div>
+                        <div class="stat-value" id="totalStat">70</div>
+                        <div class="stat-trend">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9a4 4 0 014-4h6a4 4 0 014 4v6a4 4 0 01-4 4H9a4 4 0 01-4-4V9z"/>
+                                <path d="M9 9h6v6H9z"/>
+                            </svg>
+                            Catálogo completo
+                        </div>
+                        <div class="stat-chart">
+                            <svg width="80" height="40" viewBox="0 0 80 40">
+                                <polyline points="0,35 20,25 40,20 60,15 80,10" 
+                                         stroke="#10b981" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">Exames Disponíveis</div>
+                        <div class="stat-value" id="availableStat">56</div>
+                        <div class="stat-trend">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                            Todas as unidades
+                        </div>
+                        <div class="stat-chart">
+                            <svg width="80" height="40" viewBox="0 0 80 40">
+                                <polyline points="0,30 20,20 40,25 60,15 80,8" 
+                                         stroke="#10b981" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">Exames Especializados</div>
+                        <div class="stat-value" id="specializedStat">15</div>
+                        <div class="stat-trend">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                            </svg>
+                            Alta complexidade
+                        </div>
+                        <div class="stat-chart">
+                            <svg width="80" height="40" viewBox="0 0 80 40">
+                                <polyline points="0,20 20,25 40,30 60,28 80,25" 
+                                         stroke="#f59e0b" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">Resultados Filtrados</div>
+                        <div class="stat-value" id="filteredStat">70</div>
+                        <div class="stat-trend">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+                            </svg>
+                            Mostrando todos
+                        </div>
+                        <div class="stat-chart">
+                            <svg width="80" height="40" viewBox="0 0 80 40">
+                                <polyline points="0,25 20,20 40,18 60,12 80,8" 
+                                         stroke="#8b5cf6" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selection Controls -->
+                <div class="selection-controls">
+                    <div class="selection-info">
+                        <div class="select-all-container">
+                            <input type="checkbox" id="selectAllCheckbox" class="select-all-checkbox">
+                            <label for="selectAllCheckbox">Selecionar todos</label>
+                        </div>
+                        <div class="selected-count" id="selectedCount">0 selecionados</div>
+                        <div style="font-size: 12px; color: #9ca3af; margin-left: 8px;">
+                            Selecione exames e baixe PDF ou TXT
+                        </div>
+                    </div>
+                    <div class="selection-actions">
+                        <button class="btn-clear" onclick="clearSelection()">Limpar seleção</button>
+                        <button class="btn-generate-pdf" id="generatePdfBtn" onclick="generatePDF()" disabled>
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                            Gerar PDF
+                        </button>
+                        <button class="btn-generate-pdf" id="downloadTxtBtn" onclick="downloadTextFile()" disabled style="background: #059669; border-color: #059669;">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                <polyline points="7,10 12,15 17,10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download TXT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controls Section -->
+                <div class="controls-section">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="todos">Todos</button>
+                        <button class="filter-tab" data-filter="disponíveis">Disponíveis</button>
+                        <button class="filter-tab" data-filter="especializados">Especializados</button>
+                        <button class="add-filter-btn">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Add
+                        </button>
+                    </div>
+
+                    <div class="table-controls">
+                        <div></div>
+                        <div class="table-actions">
+                            <input type="text" class="table-search" placeholder="Buscar por código ou descrição..." id="searchInput">
+                            <button class="table-btn">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="M21 21l-4.35-4.35"/>
+                                </svg>
+                            </button>
+                            <button class="table-btn">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+                                </svg>
+                            </button>
+                            <button class="table-btn">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <line x1="3" y1="6" x2="21" y2="6"/>
+                                    <line x1="7" y1="12" x2="17" y2="12"/>
+                                    <line x1="10" y1="18" x2="14" y2="18"/>
+                                </svg>
+                            </button>
+                            <button class="table-btn">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="1"/>
+                                    <circle cx="19" cy="12" r="1"/>
+                                    <circle cx="5" cy="12" r="1"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="40px">
+                                    <input type="checkbox" id="headerCheckbox" class="exam-checkbox">
+                                </th>
+                                <th>Código</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Status</th>
+                                <th>Valor</th>
+                                <th>Unidade</th>
+                                <th>Disponibilidade</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="examTableBody">
+                            <tr>
+                                <td colspan="9" class="loading">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer style="background: #1f2937; color: white; padding: 24px; text-align: center; margin-top: 40px;">
+            <p>&copy; 2025 Center Mais - Laboratório de Análises Clínicas</p>
+            <p style="margin-top: 8px; font-size: 14px; opacity: 0.8;">
+                Sistema desenvolvido para facilitar a consulta e seleção de exames laboratoriais
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Dados dos exames do PDF + Center Mais (Letra A)
+        const examData = [
+            // Exames Center Mais - Letra A
+            { code: "ABCD1", description: "ABCD1 - SEQUENCIAMENTO COMPLETO - NGS", category: "Genética", status: "Especializado", price: "R$ 1.200,00", unit: "Recife", availability: "Especializada" },
+            { code: "AC-VGKC", description: "AC. CONTRA COMPLEXO DO CANAL DE POTÁSSIO-VGKC (LGI1,CASPR2)", category: "Imunologia", status: "Especializado", price: "R$ 450,00", unit: "Recife", availability: "Especializada" },
+            { code: "ACANTHAMOEBA", description: "ACANTHAMOEBA - Pesquisa", category: "Microbiologia", status: "Especializado", price: "R$ 120,00", unit: "Centro", availability: "Especializada" },
+            { code: "ACETILCOLINA", description: "ACETILCOLINA - Anticorpo anti-receptor de Acetilcolina", category: "Imunologia", status: "Especializado", price: "R$ 280,00", unit: "Recife", availability: "Especializada" },
+            { code: "ACETILEST", description: "ACETILCOLINESTERASE ERITROCITÁRIA", category: "Bioquímica", status: "Disponível", price: "R$ 85,00", unit: "Centro", availability: "Especializada" },
+            { code: "ACETONA-FJ", description: "ACETONA - FINAL DE JORNADA DE TRABALHO", category: "Toxicologia", status: "Disponível", price: "R$ 45,00", unit: "Todas", availability: "Ocupacional" },
+            { code: "ACETONA-IJ", description: "ACETONA - INÍCIO DE JORNADA DE TRABALHO", category: "Toxicologia", status: "Disponível", price: "R$ 45,00", unit: "Todas", availability: "Ocupacional" },
+            { code: "ACETONA-ST", description: "ACETONA - SANGUE TOTAL", category: "Toxicologia", status: "Disponível", price: "R$ 55,00", unit: "Centro", availability: "Especializada" },
+            { code: "ACETONA-UPJ", description: "ACETONA URINÁRIA PÓS JORNADA", category: "Toxicologia", status: "Disponível", price: "R$ 40,00", unit: "Todas", availability: "Ocupacional" },
+            { code: "ACETONA-UPR", description: "ACETONA URINÁRIA PRÉ JORNADA", category: "Toxicologia", status: "Disponível", price: "R$ 40,00", unit: "Todas", availability: "Ocupacional" },
+            { code: "ACETONA-P", description: "ACETONA, Plasma", category: "Toxicologia", status: "Disponível", price: "R$ 50,00", unit: "Centro", availability: "Especializada" },
+            { code: "AC-2-ETOXI", description: "ACIDO 2-ETOXIACÉTICO - urina", category: "Toxicologia", status: "Especializado", price: "R$ 120,00", unit: "Recife", availability: "Especializada" },
+            { code: "GABA-U", description: "ACIDO GAMA AMINOBUTIRICO (GABA) - URINA", category: "Bioquímica", status: "Especializado", price: "R$ 180,00", unit: "Recife", availability: "Especializada" },
+            { code: "AC-HIAL", description: "Acido Hialuronico - soro", category: "Bioquímica", status: "Especializado", price: "R$ 220,00", unit: "Recife", availability: "Especializada" },
+            { code: "AC-FENIL", description: "ACIDO S FENILMERCAPTURICO - urina", category: "Toxicologia", status: "Especializado", price: "R$ 150,00", unit: "Recife", availability: "Especializada" },
+            { code: "ACILCARN", description: "ACILCARNITINAS - Perfil Quantitativo", category: "Bioquímica", status: "Especializado", price: "R$ 350,00", unit: "Recife", availability: "Especializada" },
+            { code: "ACONDRO", description: "Acondrogênese tipo 1B (SLC26A2) - sequenciamento", category: "Genética", status: "Especializado", price: "R$ 800,00", unit: "Recife", availability: "Especializada" },
+            { code: "ADAMTS13-AB", description: "ADAMTS-13 Anticorpos Inibidores Fator V. Willebrand", category: "Hematologia", status: "Especializado", price: "R$ 320,00", unit: "Recife", availability: "Especializada" },
+            { code: "ADAMTS13-AG", description: "ADAMTS-13 Antígeno da protease de ruptura Fator V.Willebrand", category: "Hematologia", status: "Especializado", price: "R$ 280,00", unit: "Recife", availability: "Especializada" },
+            { code: "ADAMTS13-AT", description: "ADAMTS-13 Atividade da protease de ruptura Fator V.Willebra", category: "Hematologia", status: "Especializado", price: "R$ 350,00", unit: "Recife", availability: "Especializada" },
+            { code: "ADA", description: "ADENOSINA DEAMINASE - ADA", category: "Bioquímica", status: "Disponível", price: "R$ 65,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "ADENOVIRUS", description: "ADENOVÍRUS", category: "Microbiologia", status: "Disponível", price: "R$ 90,00", unit: "Centro", availability: "Especializada" },
+            { code: "ADENO-IGG", description: "ADENOVÍRUS - ANTICORPOS IGG", category: "Imunologia", status: "Disponível", price: "R$ 85,00", unit: "Centro", availability: "Especializada" },
+            { code: "ADENO-PCR", description: "ADENOVÍRUS - DETECÇÃO POR PCR", category: "Biologia Molecular", status: "Especializado", price: "R$ 180,00", unit: "Recife", availability: "Especializada" },
+            { code: "ADENO-FEZES", description: "ADENOVÍRUS - FEZES", category: "Microbiologia", status: "Disponível", price: "R$ 95,00", unit: "Centro", availability: "Especializada" },
+            { code: "ADENO-DNA", description: "ADENOVIRUS DNA - AMOSTRA BIOLOGICA", category: "Biologia Molecular", status: "Especializado", price: "R$ 200,00", unit: "Recife", availability: "Especializada" },
+            { code: "ADIPONEC", description: "ADIPONECTINA", category: "Hormonal", status: "Especializado", price: "R$ 120,00", unit: "Recife", availability: "Especializada" },
+            { code: "ADRENOLEUCO", description: "Adrenoleucodistrofia (gene ABCD1)", category: "Genética", status: "Especializado", price: "R$ 900,00", unit: "Recife", availability: "Especializada" },
+            { code: "TGP", description: "ALANINA AMINOTRANSFERASE TGP", category: "Bioquímica", status: "Disponível", price: "R$ 25,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "ALBIN-OC1", description: "Albinismo Ocular Tipo 1 (gene GPR143)", category: "Genética", status: "Especializado", price: "R$ 750,00", unit: "Recife", availability: "Especializada" },
+            { code: "ALBIN-T1", description: "Albinismo Tipo 1 (gene TYR)", category: "Genética", status: "Especializado", price: "R$ 750,00", unit: "Recife", availability: "Especializada" },
+            { code: "ALBIN-T2", description: "Albinismo Tipo 2 (gene OCA2)", category: "Genética", status: "Especializado", price: "R$ 750,00", unit: "Recife", availability: "Especializada" },
+            { code: "ALB", description: "ALBUMINA", category: "Bioquímica", status: "Disponível", price: "R$ 25,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "ALB-LCR", description: "ALBUMINA - Liquor", category: "Bioquímica", status: "Disponível", price: "R$ 45,00", unit: "Centro", availability: "Especializada" },
+            { code: "ALDOL", description: "ALDOLASE", category: "Bioquímica", status: "Disponível", price: "R$ 35,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "ALDOS", description: "ALDOSTERONA", category: "Hormonal", status: "Especializado", price: "R$ 85,00", unit: "Recife", availability: "Especializada" },
+            { code: "ALDOS-CURVA", description: "ALDOSTERONA - CURVA", category: "Hormonal", status: "Especializado", price: "R$ 250,00", unit: "Recife", availability: "Especializada" },
+            { code: "ALDUR", description: "ALDOSTERONA (URINA 24 HORAS)", category: "Hormonal", status: "Especializado", price: "R$ 90,00", unit: "Centro", availability: "Especializada" },
+            { code: "ALDOS-U24", description: "ALDOSTERONA URINÁRIA - 24h", category: "Hormonal", status: "Especializado", price: "R$ 90,00", unit: "Centro", availability: "Especializada" },
+            { code: "ALFAA", description: "ALFA 1 ANTITRIPSINA", category: "Bioquímica", status: "Disponível", price: "R$ 45,00", unit: "Recife", availability: "Todas unidades" },
+            { code: "ALFA1-FEZES", description: "ALFA 1 ANTITRIPSINA - FEZES", category: "Bioquímica", status: "Disponível", price: "R$ 55,00", unit: "Centro", availability: "Especializada" },
+            { code: "ALFA1", description: "ALFA 1 GLICOPROTEÍNA ÁCIDA", category: "Bioquímica", status: "Disponível", price: "R$ 38,00", unit: "Centro", availability: "Todas unidades" },
+            { code: "A1-MICROG", description: "Alfa 1 Microglobulina (Creatinina) - urina", category: "Bioquímica", status: "Disponível", price: "R$ 65,00", unit: "Centro", availability: "Especializada" },
+            { code: "A2-MACRO", description: "ALFA 2 - MACROGLOBULINA", category: "Bioquímica", status: "Disponível", price: "R$ 55,00", unit: "Centro", availability: "Especializada" },
+            { code: "A2-ANTIPLAS", description: "ALFA 2 ANTIPLASMINA", category: "Hematologia", status: "Especializado", price: "R$ 85,00", unit: "Recife", availability: "Especializada" },
+            { code: "ALFA", description: "ALFA FETOPROTEINA", category: "Hormonal", status: "Disponível", price: "R$ 42,00", unit: "Boa Viagem", availability: "Especializada" },
+            { code: "AMI", description: "AMILASE", category: "Bioquímica", status: "Disponível", price: "R$ 28,00", unit: "Todas", availability: "Todas unidades" },
+            
+            // Exames originais do PDF mantidos
+            { code: "HEM", description: "HEMOGRAMA COMPLETO", category: "Hematologia", status: "Disponível", price: "R$ 28,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "GLI", description: "GLICOSE", category: "Bioquímica", status: "Disponível", price: "R$ 18,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "CRE", description: "CREATININA", category: "Bioquímica", status: "Disponível", price: "R$ 22,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "URE", description: "UREIA", category: "Bioquímica", status: "Disponível", price: "R$ 20,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "TSH-AL", description: "TSH ULTRASSENSÍVEL", category: "Hormonal", status: "Disponível", price: "R$ 32,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "T3L-AL", description: "T3 LIVRE", category: "Hormonal", status: "Disponível", price: "R$ 38,00", unit: "Centro", availability: "Especializada" },
+            { code: "T4L-AL", description: "T4 LIVRE", category: "Hormonal", status: "Disponível", price: "R$ 38,00", unit: "Centro", availability: "Especializada" },
+            { code: "PSA-AL", description: "PSA TOTAL", category: "Hormonal", status: "Disponível", price: "R$ 45,00", unit: "Recife", availability: "Todas unidades" },
+            { code: "PCR", description: "PROTEINA C REATIVA", category: "Imunologia", status: "Disponível", price: "R$ 28,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "VHS", description: "HEMOSSEDIMENTACAO", category: "Hematologia", status: "Disponível", price: "R$ 15,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "FERRO", description: "FERRO SERICO", category: "Bioquímica", status: "Disponível", price: "R$ 25,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "FERRI-AL", description: "FERRITINA SERICA", category: "Bioquímica", status: "Disponível", price: "R$ 42,00", unit: "Centro", availability: "Todas unidades" },
+            { code: "B12-AL", description: "VITAMINA B12", category: "Bioquímica", status: "Disponível", price: "R$ 48,00", unit: "Recife", availability: "Especializada" },
+            { code: "FOL", description: "ACIDO FOLICO", category: "Bioquímica", status: "Disponível", price: "R$ 45,00", unit: "Centro", availability: "Especializada" },
+            { code: "VIT25", description: "VITAMINA D - 25 HIDROXI", category: "Bioquímica", status: "Disponível", price: "R$ 65,00", unit: "Recife", availability: "Especializada" },
+            { code: "IGE-AL", description: "IGE TOTAL", category: "Imunologia", status: "Disponível", price: "R$ 35,00", unit: "Centro", availability: "Todas unidades" },
+            { code: "HIV", description: "HIV 1 E 2, ANTICORPOS ANTI", category: "Imunologia", status: "Disponível", price: "R$ 38,00", unit: "Todas", availability: "Confidencial" },
+            { code: "HCV", description: "ANTICORPOS ANTI HCV", category: "Imunologia", status: "Disponível", price: "R$ 42,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "VDRL", description: "VDRL", category: "Imunologia", status: "Disponível", price: "R$ 25,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "EAS", description: "SUMÁRIO DE URINA", category: "Urinálise", status: "Disponível", price: "R$ 15,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "UROC-AL", description: "UROCULTURA COM ANTIBIOGRAMA", category: "Microbiologia", status: "Disponível", price: "R$ 45,00", unit: "Centro", availability: "Especializada" },
+            { code: "PF", description: "PARASITOLOGICO DE FEZES", category: "Microbiologia", status: "Disponível", price: "R$ 28,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "COPRO-AL", description: "COPROCULTURA", category: "Microbiologia", status: "Especializado", price: "R$ 55,00", unit: "Recife", availability: "Especializada" },
+            { code: "COL", description: "COLESTEROL TOTAL", category: "Bioquímica", status: "Disponível", price: "R$ 20,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "HDL", description: "COLESTEROL HDL", category: "Bioquímica", status: "Disponível", price: "R$ 22,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "LDL", description: "COLESTEROL LDL", category: "Bioquímica", status: "Disponível", price: "R$ 25,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "TRI", description: "TRIGLICERIDES", category: "Bioquímica", status: "Disponível", price: "R$ 22,00", unit: "Todas", availability: "Todas unidades" },
+            { code: "GAD", description: "ANTICORPOS ANTI-GAD", category: "Imunologia", status: "Especializado", price: "R$ 125,00", unit: "Recife", availability: "Especializada" },
+            { code: "TPO-AL", description: "ANTICORPOS ANTI TPO", category: "Imunologia", status: "Disponível", price: "R$ 48,00", unit: "Centro", availability: "Especializada" },
+            { code: "TRAB", description: "ANTICORPO INIBIDOR DE TSH (TRAB)", category: "Hormonal", status: "Especializado", price: "R$ 95,00", unit: "Recife", availability: "Especializada" }
+        ];
+
+        let filteredExams = [...examData];
+        let currentFilter = 'todos';
+        let selectedExams = new Set(); // Para armazenar os códigos dos exames selecionados
+
+        function getCategoryClass(category) {
+            const categoryMap = {
+                'Hormonal': 'category-hormonal',
+                'Hematologia': 'category-hematologia', 
+                'Bioquímica': 'category-bioquimica',
+                'Imunologia': 'category-imunologia',
+                'Microbiologia': 'category-microbiologia',
+                'Urinálise': 'category-urinanalise',
+                'Genética': 'category-genetica',
+                'Toxicologia': 'category-toxicologia',
+                'Biologia Molecular': 'category-molecular'
+            };
+            return categoryMap[category] || 'category-bioquimica';
+        }
+
+        function getStatusClass(status) {
+            return status === 'Especializado' ? 'status-specialized' : 'status-available';
+        }
+
+        function renderExams(exams) {
+            const tbody = document.getElementById('examTableBody');
+            
+            if (exams.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="no-results">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                            <div>Nenhum exame encontrado</div>
+                            <div style="font-size: 12px; margin-top: 8px; opacity: 0.7;">Tente ajustar sua pesquisa</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = exams.map(exam => `
+                <tr>
+                    <td>
+                        <input type="checkbox" 
+                               class="exam-checkbox" 
+                               data-exam-code="${exam.code}"
+                               ${selectedExams.has(exam.code) ? 'checked' : ''}
+                               onchange="toggleExamSelection('${exam.code}')">
+                    </td>
+                    <td class="exam-code">${exam.code}</td>
+                    <td class="exam-description" title="${exam.description}">${exam.description}</td>
+                    <td><span class="category-badge ${getCategoryClass(exam.category)}">${exam.category}</span></td>
+                    <td><span class="status-badge ${getStatusClass(exam.status)}">${exam.status}</span></td>
+                    <td>${exam.price}</td>
+                    <td>${exam.unit}</td>
+                    <td>${exam.availability}</td>
+                    <td>
+                        <div class="action-group">
+                            <button class="action-btn" title="Visualizar" onclick="viewExam('${exam.code}')">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn" title="Solicitar" onclick="requestExam('${exam.code}')">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            updateSelectionState();
+        }
+
+        function updateStats() {
+            const total = examData.length;
+            const available = examData.filter(e => e.status === 'Disponível').length;
+            const specialized = examData.filter(e => e.status === 'Especializado').length;
+            const filtered = filteredExams.length;
+            
+            document.getElementById('totalStat').textContent = total;
+            document.getElementById('availableStat').textContent = available;
+            document.getElementById('specializedStat').textContent = specialized;
+            document.getElementById('filteredStat').textContent = filtered;
+        }
+
+        function searchExams(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            let baseData = examData;
+            
+            // Aplicar filtro de categoria primeiro
+            if (currentFilter !== 'todos') {
+                if (currentFilter === 'disponíveis') {
+                    baseData = examData.filter(exam => exam.status === 'Disponível');
+                } else if (currentFilter === 'especializados') {
+                    baseData = examData.filter(exam => exam.status === 'Especializado');
+                }
+            }
+            
+            // Aplicar busca
+            if (!term) {
+                filteredExams = [...baseData];
+            } else {
+                filteredExams = baseData.filter(exam => 
+                    exam.code.toLowerCase().includes(term) || 
+                    exam.description.toLowerCase().includes(term) ||
+                    exam.category.toLowerCase().includes(term)
+                );
+            }
+            
+            renderExams(filteredExams);
+            updateStats();
+        }
+
+        function applyFilter(filter) {
+            currentFilter = filter;
+            const searchTerm = document.getElementById('searchInput').value;
+            searchExams(searchTerm);
+        }
+
+        // Funções de seleção
+        function toggleExamSelection(examCode) {
+            if (selectedExams.has(examCode)) {
+                selectedExams.delete(examCode);
+            } else {
+                selectedExams.add(examCode);
+            }
+            updateSelectionState();
+        }
+
+        function updateSelectionState() {
+            const selectedCount = selectedExams.size;
+            const totalVisible = filteredExams.length;
+            
+            // Atualizar contador
+            document.getElementById('selectedCount').textContent = 
+                selectedCount === 1 ? '1 selecionado' : `${selectedCount} selecionados`;
+            
+            // Atualizar botões
+            const pdfBtn = document.getElementById('generatePdfBtn');
+            const txtBtn = document.getElementById('downloadTxtBtn');
+            pdfBtn.disabled = selectedCount === 0;
+            txtBtn.disabled = selectedCount === 0;
+            
+            // Atualizar checkbox "selecionar todos"
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const headerCheckbox = document.getElementById('headerCheckbox');
+            
+            if (selectedCount === 0) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+                headerCheckbox.indeterminate = false;
+                headerCheckbox.checked = false;
+            } else if (selectedCount === totalVisible) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+                headerCheckbox.indeterminate = false;
+                headerCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.indeterminate = true;
+                selectAllCheckbox.checked = false;
+                headerCheckbox.indeterminate = true;
+                headerCheckbox.checked = false;
+            }
+        }
+
+        function selectAllExams() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            
+            if (selectAllCheckbox.checked) {
+                // Selecionar todos os exames visíveis
+                filteredExams.forEach(exam => {
+                    selectedExams.add(exam.code);
+                });
+            } else {
+                // Deselecionar todos os exames visíveis
+                filteredExams.forEach(exam => {
+                    selectedExams.delete(exam.code);
+                });
+            }
+            
+            renderExams(filteredExams);
+        }
+
+        function clearSelection() {
+            selectedExams.clear();
+            renderExams(filteredExams);
+        }
+
+        function generatePDF() {
+            if (selectedExams.size === 0) {
+                alert('Selecione pelo menos um exame para gerar o PDF');
+                return;
+            }
+
+            // Mostrar indicador de carregamento
+            const pdfBtn = document.getElementById('generatePdfBtn');
+            const originalText = pdfBtn.innerHTML;
+            pdfBtn.innerHTML = `
+                <svg class="icon" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                        <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+                        <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+                Gerando PDF...
+            `;
+            pdfBtn.disabled = true;
+
+            // Usar método de impressão (sempre funciona)
+            setTimeout(() => {
+                pdfBtn.innerHTML = originalText;
+                pdfBtn.disabled = false;
+                generateSimplePDF();
+            }, 1000);
+        }
+
+        function generateSimplePDF() {
+            // Gerar PDF usando window.print
+            const selectedExamData = examData.filter(exam => selectedExams.has(exam.code));
+            
+            // Calcular valor total
+            let totalValue = 0;
+            selectedExamData.forEach(exam => {
+                const price = exam.price.replace('R$ ', '').replace('.', '').replace(',', '.');
+                totalValue += parseFloat(price) || 0;
+            });
+            
+            // Criar conteúdo HTML para impressão
+            const printContent = `
+                <html>
+                <head>
+                    <title>Center Mais - Exames Selecionados</title>
+                    <style>
+                        @media print { @page { margin: 1cm; } }
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #7c3aed; padding-bottom: 20px; }
+                        .header h1 { color: #7c3aed; margin-bottom: 5px; }
+                        .exam-item { margin-bottom: 15px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; }
+                        .exam-code { font-weight: bold; color: #7c3aed; font-size: 16px; }
+                        .exam-details { font-size: 12px; color: #666; margin-top: 5px; }
+                        .total { font-weight: bold; margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 2px solid #7c3aed; }
+                        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #ccc; padding-top: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🧪 Center Mais</h1>
+                        <h2>Lista de Exames Selecionados</h2>
+                        <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
+                    </div>
+                    
+                    ${selectedExamData.map((exam, index) => `
+                        <div class="exam-item">
+                            <div class="exam-code">${index + 1}. ${exam.code}</div>
+                            <div style="font-size: 14px; margin: 5px 0;"><strong>${exam.description}</strong></div>
+                            <div class="exam-details">
+                                <strong>Categoria:</strong> ${exam.category} | 
+                                <strong>Status:</strong> ${exam.status} | 
+                                <strong>Valor:</strong> ${exam.price} | 
+                                <strong>Unidade:</strong> ${exam.unit}<br>
+                                <strong>Disponibilidade:</strong> ${exam.availability}
+                            </div>
+                        </div>
+                    `).join('')}
+                    
+                    <div class="total">
+                        <div style="font-size: 18px;"><strong>📊 RESUMO</strong></div>
+                        <div style="margin-top: 10px;">
+                            <strong>Total de exames selecionados:</strong> ${selectedExamData.length}<br>
+                            <strong>Valor total estimado:</strong> R$ ${totalValue.toFixed(2).replace('.', ',')}
+                        </div>
+                    </div>
+                    
+                    <div class="footer">
+                        <p><strong>Center Mais - Laboratório de Análises Clínicas</strong></p>
+                        <p>Recife - PE | Sistema de Consulta de Exames</p>
+                        <p>Este documento foi gerado automaticamente pelo sistema Center Mais</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Abrir nova janela para impressão
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            
+            // Aguardar um pouco e chamar a impressão
+            setTimeout(() => {
+                printWindow.print();
+                alert(`Lista gerada com sucesso!\n\n✅ ${selectedExamData.length} exames selecionados\n💰 Valor total: R$ ${totalValue.toFixed(2).replace('.', ',')}\n\n📄 Na janela de impressão, escolha "Salvar como PDF" para criar o arquivo.`);
+            }, 500);
+        }
+
+        function downloadTextFile() {
+            if (selectedExams.size === 0) {
+                alert('Selecione pelo menos um exame para fazer o download');
+                return;
+            }
+
+            const selectedExamData = examData.filter(exam => selectedExams.has(exam.code));
+            const today = new Date();
+            
+            // Calcular valor total
+            let totalValue = 0;
+            selectedExamData.forEach(exam => {
+                const price = exam.price.replace('R$ ', '').replace('.', '').replace(',', '.');
+                totalValue += parseFloat(price) || 0;
+            });
+            
+            // Criar conteúdo do arquivo
+            let content = '='.repeat(80) + '\n';
+            content += '                      🧪 CENTER MAIS - LABORATÓRIO\n';
+            content += '                   Lista de Exames Selecionados\n';
+            content += '='.repeat(80) + '\n\n';
+            content += `📅 Data: ${today.toLocaleDateString('pt-BR')} às ${today.toLocaleTimeString('pt-BR')}\n`;
+            content += `📊 Total de exames selecionados: ${selectedExamData.length}\n`;
+            content += `💰 Valor total estimado: R$ ${totalValue.toFixed(2).replace('.', ',')}\n\n`;
+            content += '='.repeat(80) + '\n';
+            content += '📋 LISTA DETALHADA DE EXAMES:\n';
+            content += '='.repeat(80) + '\n\n';
+            
+            selectedExamData.forEach((exam, index) => {
+                content += `${(index + 1).toString().padStart(2, '0')}. 🔬 ${exam.code}\n`;
+                content += `    📝 Descrição: ${exam.description}\n`;
+                content += `    🏷️  Categoria: ${exam.category}\n`;
+                content += `    ⚡ Status: ${exam.status}\n`;
+                content += `    💰 Valor: ${exam.price}\n`;
+                content += `    🏥 Unidade: ${exam.unit}\n`;
+                content += `    📍 Disponibilidade: ${exam.availability}\n`;
+                content += '\n' + '-'.repeat(60) + '\n\n';
+            });
+            
+            content += '='.repeat(80) + '\n';
+            content += '📊 RESUMO FINANCEIRO:\n';
+            content += '='.repeat(80) + '\n';
+            content += `Total de exames: ${selectedExamData.length}\n`;
+            content += `Valor total: R$ ${totalValue.toFixed(2).replace('.', ',')}\n`;
+            content += `Valor médio por exame: R$ ${(totalValue / selectedExamData.length).toFixed(2).replace('.', ',')}\n\n`;
+            content += '='.repeat(80) + '\n';
+            content += '🏥 Center Mais - Laboratório de Análises Clínicas\n';
+            content += '📍 Recife - PE\n';
+            content += '🌐 Sistema de Consulta de Exames Laboratoriais\n';
+            content += '📄 Documento gerado automaticamente\n';
+            content += '='.repeat(80);
+            
+            // Criar e fazer download do arquivo
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Center_Mais_Exames_${today.toISOString().split('T')[0]}.txt`;
+            
+            // Simular clique para download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+            alert(`📄 Arquivo baixado com sucesso!\n\n✅ ${selectedExamData.length} exames selecionados\n💰 Valor total: R$ ${totalValue.toFixed(2).replace('.', ',')}\n\n📁 Verifique sua pasta de Downloads`);
+        }
+
+        // Funções para ações dos exames
+        function viewExam(code) {
+            const exam = examData.find(e => e.code === code);
+            alert(`👁️ Visualizando exame:\n\n🔬 ${exam.code} - ${exam.description}\n\n🏷️  Categoria: ${exam.category}\n⚡ Status: ${exam.status}\n💰 Valor: ${exam.price}\n🏥 Unidade: ${exam.unit}\n📍 Disponibilidade: ${exam.availability}`);
+        }
+
+        function requestExam(code) {
+            const exam = examData.find(e => e.code === code);
+            alert(`📋 Solicitando exame:\n\n🔬 ${exam.code} - ${exam.description}\n💰 Valor: ${exam.price}\n\n✅ Entre em contato conosco para agendar este exame!`);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            searchExams(e.target.value);
+        });
+
+        // Event listeners para checkboxes
+        document.getElementById('selectAllCheckbox').addEventListener('change', selectAllExams);
+        document.getElementById('headerCheckbox').addEventListener('change', function() {
+            document.getElementById('selectAllCheckbox').checked = this.checked;
+            selectAllExams();
+        });
+
+        // Tabs de filtro
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active de todas as tabs
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                // Adiciona active na tab clicada
+                this.classList.add('active');
+                
+                // Aplica o filtro
+                const filter = this.dataset.filter;
+                applyFilter(filter);
+            });
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pequeno delay para mostrar loading
+            setTimeout(() => {
+                renderExams(examData);
+                updateStats();
+            }, 500);
+        });
+    </script>
+
+    <!-- Analytics (opcional) -->
+    <script>
+        // Google Analytics ou outro serviço de analytics pode ser adicionado aqui
+        console.log('Center Mais - Sistema de Exames Laboratoriais carregado com sucesso! 🧪');
+    </script>
 </body>
 </html>
